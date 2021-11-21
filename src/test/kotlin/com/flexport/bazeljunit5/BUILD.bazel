@@ -1,0 +1,15 @@
+load("//:rules/defs.bzl", "kt_jvm_library")
+
+kt_jvm_library(
+    name = "bazeljunit5",
+    srcs = glob(["*.kt"]),
+    deps = [
+        "@com_github_jetbrains_kotlin//:kotlin-stdlib-jdk8",
+        "@maven//:org_junit_platform_junit_platform_commons",
+        "@maven//:org_junit_platform_junit_platform_console",
+        "@maven//:org_junit_jupiter_junit_jupiter",
+    ],
+    visibility = [
+        "//src/test:__subpackages__",
+    ],
+)

@@ -1,0 +1,15 @@
+load("//:rules/defs.bzl", "kt_jvm_library")
+
+kt_jvm_library(
+    name = "common",
+    srcs = [
+        "InputFetch.kt",
+    ],
+    deps = [
+        "@maven//:com_github_kittinunf_fuel_fuel",
+    ],
+    visibility = [
+      "//src/test/kotlin/org/softwarecurmudgeon:__subpackages__",
+      "//src/main/kotlin/org/softwarecurmudgeon:__subpackages__",
+    ],
+)

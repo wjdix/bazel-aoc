@@ -1,0 +1,10 @@
+load("//:rules/defs.bzl", "kt_jvm_test")
+
+kt_jvm_test(
+    name = "test",
+    srcs = glob(["*Test.kt"]),
+    deps = [
+        "//src/main/kotlin/org/softwarecurmudgeon/solvers:solvers",
+        "@maven//:org_junit_jupiter_junit_jupiter",
+    ],
+)

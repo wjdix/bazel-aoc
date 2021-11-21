@@ -1,0 +1,19 @@
+load("//:rules/defs.bzl", "kt_jvm_binary")
+
+kt_jvm_binary(
+    name = "AocApplication",
+    srcs = ["AocApplication.kt"],
+    runtime_deps = [
+        "//src/main/kotlin/org/softwarecurmudgeon/solvers:solvers",
+    ],
+    deps = [
+        "//src/main/kotlin/org/softwarecurmudgeon/solvers:solvers",
+        "//src/main/kotlin/org/softwarecurmudgeon/common:common",
+        "@com_github_jetbrains_kotlin//:kotlin-reflect",
+        "@maven//:org_jetbrains_kotlinx_kotlinx_cli_jvm",
+    ],
+    main_class = "org.softwarecurmudgeon.AocApplication"
+)
+
+
+
