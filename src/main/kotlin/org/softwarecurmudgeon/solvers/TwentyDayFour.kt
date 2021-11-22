@@ -1,5 +1,6 @@
 package org.softwarecurmudgeon.solvers
 
+import org.softwarecurmudgeon.common.BlankLineSeparatedSequence
 import org.softwarecurmudgeon.common.Day
 
 data class Passport(
@@ -110,23 +111,7 @@ object TwentyDayFour: Solution<Passport, Int>(), Solver {
     override val day: Day = Day(2020, 4)
 
     override fun parseInput(input: Sequence<String>): Sequence<Passport> =
-        generateSequence(
-            seedFunction = {
-                val first = input.takeWhile { it.isNotEmpty() }
-                val rest = input.drop(first.count() + 1)
-                Pair(first, rest)
-            },
-            nextFunction = { (_, rest) ->
-                if (rest.none()) {
-                    null
-                } else {
-                    val first = rest.takeWhile { it.isNotEmpty() }
-                    val newRest = rest.drop(first.count() + 1)
-                    Pair(first, newRest)
-                }
-            }
-        )
-            .map { it.first }
+        BlankLineSeparatedSequence.generate(input)
             .map(Passport.Companion::parse)
 
     override fun partOne(input: Sequence<Passport>): Int =
