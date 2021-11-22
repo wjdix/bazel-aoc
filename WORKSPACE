@@ -15,6 +15,7 @@ load("@rules_jvm_external//:defs.bzl", "maven_install")
 maven_install(
     artifacts = [
         "org.junit.jupiter:junit-jupiter:5.8.1",
+        "org.junit.jupiter:junit-jupiter-params:5.8.1",
         "org.junit.platform:junit-platform-launcher:1.8.1",
         "org.junit.platform:junit-platform-console:1.8.1",
         "org.junit.platform:junit-platform-suite-api:1.8.1",

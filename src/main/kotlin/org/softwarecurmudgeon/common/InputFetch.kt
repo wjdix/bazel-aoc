@@ -12,7 +12,7 @@ object InputFetch {
     private fun execute(url: String): String {
         val (request, _, result) = url
             .httpGet()
-            .header(mapOf("Cookie" to session))
+            .header(mapOf("Cookie" to Cookie.session))
             .responseString()
         return when (result) {
             is Result.Success -> {

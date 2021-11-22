@@ -6,5 +6,6 @@ kt_jvm_test(
     deps = [
         "//src/main/kotlin/org/softwarecurmudgeon/solvers:solvers",
         "@maven//:org_junit_jupiter_junit_jupiter",
+        "@maven//:org_junit_jupiter_junit_jupiter_params",
     ],
 )
