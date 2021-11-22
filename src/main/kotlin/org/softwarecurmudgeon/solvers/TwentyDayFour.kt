@@ -23,8 +23,65 @@ data class Passport(
             passportId,
         ).none { it.isNullOrEmpty() }
 
+    fun valid2(): Boolean =
+        birthYear?.toIntOrNull() in (1920..2002)
+                && issueYear?.toIntOrNull() in (2010..2020)
+                && expYear?.toIntOrNull() in (2020..2030)
+                && validHeight(height)
+                && validHairColor(hairColor)
+                && validEyeColor(eyeColor)
+                && validPassportId(passportId)
+
+    private fun validPassportId(passportId: String?): Boolean =
+        if (passportId.isNullOrEmpty()) {
+            false
+        } else {
+            "\\d{9}".toRegex().matchEntire(passportId)?.let { true } ?: false
+        }
+
+    private fun validEyeColor(eyeColor: String?): Boolean =
+        if (eyeColor.isNullOrEmpty()) {
+            false
+        } else {
+            eyeColor in setOf("amb", "blu", "brn", "gry", "grn", "hzl", "oth")
+        }
+
+    private fun validHairColor(hairColor: String?): Boolean =
+        if (hairColor.isNullOrEmpty()) {
+            false
+        } else {
+            "#[a-f0-9]{6}".toRegex()
+                .matchEntire(hairColor)
+                ?.let { true }
+                ?: false
+        }
+
+    private fun validHeight(height: String?): Boolean =
+        if (height.isNullOrEmpty()) {
+            false
+        }  else {
+            "(\\d+)(cm|in)"
+                .toRegex()
+                .matchEntire(height)
+                ?.groupValues
+                ?.let { (_, digits, scale) ->
+                    when (scale) {
+                        "cm" -> {
+                            digits.toIntOrNull() in (150..193)
+                        }
+                        "in" -> {
+                            digits.toIntOrNull() in (59..76)
+                        }
+                        else -> false
+                    }
+
+                }
+                ?: false
+        }
+
+
     companion object {
-        fun parse(input: List<String>): Passport =
+        fun parse(input: Sequence<String>): Passport =
             input
                 .joinToString(" ")
                 .split(" ")
@@ -55,16 +112,16 @@ object TwentyDayFour: Solution<Passport, Int>(), Solver {
     override fun parseInput(input: Sequence<String>): Sequence<Passport> =
         generateSequence(
             seedFunction = {
-                val first = input.takeWhile { it.isNotEmpty() }.toList()
-                val rest = input.minus(first).drop(1)
+                val first = input.takeWhile { it.isNotEmpty() }
+                val rest = input.drop(first.count() + 1)
                 Pair(first, rest)
             },
             nextFunction = { (_, rest) ->
                 if (rest.none()) {
                     null
                 } else {
-                    val first = rest.takeWhile { it.isNotEmpty() }.toList()
-                    val newRest = rest.minus(first).drop(1)
+                    val first = rest.takeWhile { it.isNotEmpty() }
+                    val newRest = rest.drop(first.count() + 1)
                     Pair(first, newRest)
                 }
             }
@@ -72,11 +129,9 @@ object TwentyDayFour: Solution<Passport, Int>(), Solver {
             .map { it.first }
             .map(Passport.Companion::parse)
 
-    override fun partOne(input: Sequence<Passport>): Int {
-        val (valid, _) = input.partition(Passport::valid)
-        valid.forEach(::println)
-        return valid.count()
-    }
+    override fun partOne(input: Sequence<Passport>): Int =
+        input.count(Passport::valid)
 
-    override fun partTwo(input: Sequence<Passport>): Int = 4
+    override fun partTwo(input: Sequence<Passport>): Int =
+        input.count(Passport::valid2)
 }
