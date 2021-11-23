@@ -3,9 +3,6 @@ load("//:rules/defs.bzl", "kt_jvm_binary")
 kt_jvm_binary(
     name = "AocApplication",
     srcs = ["AocApplication.kt"],
-    runtime_deps = [
-        "//src/main/kotlin/org/softwarecurmudgeon/solvers:solvers",
-    ],
     deps = [
         "//src/main/kotlin/org/softwarecurmudgeon/solvers:solvers",
         "//src/main/kotlin/org/softwarecurmudgeon/common:common",
