@@ -1,0 +1,12 @@
+load("//:rules/defs.bzl", "kt_jvm_library")
+
+kt_jvm_library(
+    name = "compy",
+    srcs = glob([
+        "*.kt",
+    ]),
+    visibility = [
+      "//src/test/kotlin/org/softwarecurmudgeon:__subpackages__",
+      "//src/main/kotlin/org/softwarecurmudgeon:__subpackages__",
+    ],
+)

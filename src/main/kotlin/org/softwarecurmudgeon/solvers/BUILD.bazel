@@ -5,6 +5,7 @@ kt_jvm_library(
     srcs = glob(["*.kt"]),
     deps = [
         "//src/main/kotlin/org/softwarecurmudgeon/common:common",
+        "//src/main/kotlin/org/softwarecurmudgeon/compy:compy",
     ],
     visibility = [
       "//src/main/kotlin/org/softwarecurmudgeon:__subpackages__",
