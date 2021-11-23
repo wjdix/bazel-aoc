@@ -101,7 +101,8 @@ object TwentyDaySeven: Solution<BagSpecification, Int>(), Solver {
 
     override fun partTwo(input: Sequence<BagSpecification>): Int =
         bagCount(
-            listOf(BagCount(count = 1, name ="shiny gold")),
-            input.associateBy(BagSpecification::name)
-        ) - 1
+            bagCounts = listOf(BagCount(count = 1, name ="shiny gold")),
+            bagMap = input.associateBy(BagSpecification::name),
+            sum = -1,
+        )
 }
