@@ -22,4 +22,12 @@ internal class TwentyDayEightTest {
             TwentyDayEight.parseInput(sampleInput).let(TwentyDayEight::partOne)
         )
     }
+
+    @Test
+    fun testPartTwo() {
+        assertEquals(
+            8,
+            TwentyDayEight.parseInput(sampleInput).let(TwentyDayEight::partTwo)
+        )
+    }
 }

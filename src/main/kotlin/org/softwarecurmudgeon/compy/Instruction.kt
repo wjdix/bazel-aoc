@@ -7,7 +7,7 @@ sealed interface Instruction {
                 when (instruction) {
                     "acc" -> Accumulator(parseNum(input.drop(3)))
                     "jmp" -> Jump(parseNum(input.drop(3)))
-                    "nop" -> Jump(1)
+                    "nop" -> NoOp(parseNum(input.drop(3)))
                     else -> throw IllegalArgumentException("$instruction is not a valid instruction")
                 }
             }
@@ -31,3 +31,5 @@ sealed interface Instruction {
 data class Accumulator(val operand: Int) : Instruction
 
 data class Jump(val operand: Int): Instruction
+
+data class NoOp(val operand: Int): Instruction

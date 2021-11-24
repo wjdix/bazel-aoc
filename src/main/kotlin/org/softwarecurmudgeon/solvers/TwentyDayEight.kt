@@ -2,6 +2,7 @@ package org.softwarecurmudgeon.solvers
 
 import org.softwarecurmudgeon.common.Day
 import org.softwarecurmudgeon.compy.Compy
+import org.softwarecurmudgeon.compy.ForkingExecutor
 import org.softwarecurmudgeon.compy.Instruction as CompyInstruction
 
 object TwentyDayEight: Solution<CompyInstruction, Int>(), Solver {
@@ -19,7 +20,11 @@ object TwentyDayEight: Solution<CompyInstruction, Int>(), Solver {
             nextFunction = { it.execute() }
         ).first(Compy::looped).previous
 
-    override fun partTwo(input: Sequence<CompyInstruction>): Int {
-        TODO("Not yet implemented")
-    }
+    override fun partTwo(input: Sequence<CompyInstruction>): Int =
+        generateSequence(ForkingExecutor(current = Compy(input.toList()))) {
+            it.next()
+        }
+            .map(ForkingExecutor::current)
+            .first(Compy::completed)
+            .let(Compy::accumulator)
 }
