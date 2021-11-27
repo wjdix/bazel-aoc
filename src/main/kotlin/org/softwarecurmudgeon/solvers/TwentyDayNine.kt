@@ -24,28 +24,36 @@ object TwentyDayNine: Solution<Int, Int>(), Solver {
         get() = Day(2020, 9)
 
     override fun parseInput(input: Sequence<String>): Sequence<Int> =
-        input.filter(String::isNotEmpty).mapNotNull(String::toIntOrNull)
+        input
+            .filter(String::isNotEmpty)
+            .mapNotNull(String::toIntOrNull)
 
     override fun partOne(input: Sequence<Int>): Int = solvePartOneFor(25, input)!!
 
-    override fun partTwo(input: Sequence<Int>): Int =
-        2.until(100_000).asSequence().flatMap { size ->
-            input.windowed(size)
-        }.first {
-            it.sum() == 90433990
-        }.let {
-            val sorted = it.sorted()
-            sorted.first() + sorted.last()
-        }
+    override fun partTwo(input: Sequence<Int>): Int = solvePartTwoFor(25, input)
 
     fun solvePartOneFor(bufferSize: Int, input: Sequence<Int>) =
         input
-            .runningFold(
-                Triple<Int?, Boolean, RingBuffer>(null, true, RingBuffer(bufferSize))
-            ) { (_, _, buffer), it ->
-                val newBuffer = buffer.add(it)
-                Triple(it, buffer.isValid(it), newBuffer)
+            .runningFold(Triple<Int?, Boolean, RingBuffer>(
+                null,
+                true,
+                RingBuffer(bufferSize)
+            )) { (_, _, buffer), it ->
+                Triple(it, buffer.isValid(it), buffer.add(it))
             }
             .first { !it.second }
             .first
+
+    fun solvePartTwoFor(bufferSize: Int, input: Sequence<Int>) =
+        solvePartOneFor(bufferSize, input).let { target ->
+            2.until(100_000).asSequence().flatMap { size ->
+                input.windowed(size)
+            }.first {
+                it.sum() == target
+            }.let {
+                val sorted = it.sorted()
+                sorted.first() + sorted.last()
+            }
+        }
+
 }
