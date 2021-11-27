@@ -3,8 +3,8 @@ package org.softwarecurmudgeon.solvers
 import org.softwarecurmudgeon.common.Day
 
 data class ChargerChain(
-    val chained: List<Int> = listOf(0),
-    val remaining: List<Int>,
+    val chained: List<Long> = listOf(0),
+    val remaining: List<Long>,
 ) {
     fun completed(): Boolean = remaining.isEmpty()
     fun candidates(): List<ChargerChain> {
@@ -17,18 +17,18 @@ data class ChargerChain(
             )
         }
     }
-    fun compute() =
+    fun compute() : Long =
         chained
             .windowed(2)
-            .fold(Pair(0, 1)) { acc, (x, y) ->
+            .fold(Pair(0L, 1L)) { acc, (x, y) ->
                 when ((y - x)) {
-                    1 -> {
+                    1L -> {
                         val newAcc = acc.copy(
                             first = acc.first + 1
                         )
                         newAcc
                     }
-                    3 -> {
+                    3L -> {
                         val newAcc = acc.copy(
                             second = acc.second + 1
                         )
@@ -52,18 +52,31 @@ data class ChargerSolver(
         )
     }
 }
+class Paths {
+    val memo: MutableMap<Pair<Long, Long>, Long> =
+        mutableMapOf(
+            Pair(0L, 0L) to 1L
+        )
 
-object TwentyDayTen: Solution<Int, Int>(), Solver {
+    fun set(from: Long, to: Long, pathCount: Long): Paths {
+        memo[Pair(from, to)] = pathCount
+        return this
+    }
+
+    fun get(from: Long, to:Long): Long = memo[Pair(from, to)] ?: 0L
+}
+
+object TwentyDayTen: Solution<Long, Long>(), Solver {
     override val day: Day
         get() = Day(2020, 10)
 
-    override fun parseInput(input: Sequence<String>): Sequence<Int> =
+    override fun parseInput(input: Sequence<String>): Sequence<Long> =
         input
             .filter(String::isNotEmpty)
-            .mapNotNull(String::toIntOrNull)
+            .mapNotNull(String::toLongOrNull)
             .sorted()
 
-    override fun partOne(input: Sequence<Int>): Int =
+    override fun partOne(input: Sequence<Long>): Long =
         generateSequence(
             seed = ChargerSolver(
                 current = ChargerChain(remaining = input.toList())
@@ -73,11 +86,20 @@ object TwentyDayTen: Solution<Int, Int>(), Solver {
             .map(ChargerSolver::current)
             .firstOrNull(ChargerChain::completed)
             ?.compute()
-            ?: -1
+            ?: -1L
 
-    override fun partTwo(input: Sequence<Int>): Int {
-        val max = input.maxOrNull()
-        val min = input.minOrNull() ?: 0
-        return 4
-    }
+    override fun partTwo(input: Sequence<Long>): Long =
+        input.maxOrNull()?.let { max ->
+            input
+                .sorted()
+                .fold(Paths()) { paths, int ->
+                    paths.set(
+                        from = 0,
+                        to = int,
+                        pathCount = (int - 3).until(int).sumOf { paths.get(0, it) }
+                    )
+                }
+                .get(0, max)
+        }
+            ?: -1L
 }

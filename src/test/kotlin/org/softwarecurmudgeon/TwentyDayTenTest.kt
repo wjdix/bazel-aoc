@@ -67,4 +67,19 @@ internal class TwentyDayTenTest {
 
     }
 
+    @Test
+    fun testSmallPartTwo() {
+        assertEquals(
+            8,
+            TwentyDayTen.parseInput(smallSampleInput).let(TwentyDayTen::partTwo)
+        )
+    }
+
+    @Test
+    fun testPartTwo() {
+        assertEquals(
+            19208,
+            TwentyDayTen.parseInput(sampleInput).let(TwentyDayTen::partTwo)
+        )
+    }
 }
