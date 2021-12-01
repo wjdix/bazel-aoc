@@ -10,11 +10,14 @@ object TwentyOneDayOne: Solution<Int, Int>(), Solver {
         input.mapNotNull(String::toIntOrNull)
 
     override fun partOne(input: Sequence<Int>): Int =
-            input.zipWithNext()
-                .count { (a, b) -> a < b}
+        input
+            .zipWithNext()
+            .count { (a, b) -> a < b}
 
     override fun partTwo(input: Sequence<Int>): Int =
-        input.windowed(3).map { (a, b, c) -> a + b + c }
+        input
+            .windowed(3)
+            .map { (a, b, c) -> a + b + c }
             .zipWithNext()
             .count{ (a, b) -> a < b}
 }
