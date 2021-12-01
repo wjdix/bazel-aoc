@@ -17,7 +17,7 @@ object TwentyOneDayOne: Solution<Int, Int>(), Solver {
     override fun partTwo(input: Sequence<Int>): Int =
         input
             .windowed(3)
-            .map { (a, b, c) -> a + b + c }
+            .map(List<Int>::sum)
             .zipWithNext()
-            .count{ (a, b) -> a < b}
+            .count{ (a, b) -> a < b }
 }
