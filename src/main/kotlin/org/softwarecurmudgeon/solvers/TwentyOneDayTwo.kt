@@ -4,8 +4,8 @@ import org.softwarecurmudgeon.common.Day
 
 sealed interface Instruction {
     companion object {
-        fun parse(instruction: String) : Instruction? {
-            val (instruction, int) = instruction.split(" ")
+        fun parse(input: String) : Instruction? {
+            val (instruction, int) = input.split(" ")
             return when (instruction) {
                 "forward" -> ThisForward(int.toInt())
                 "down" -> Down(int.toInt())
@@ -35,12 +35,12 @@ data class ThisShip(val position: Int = 0, val depth: Int = 0) {
 data class AimShip(val position: Int = 0, val depth: Int = 0, val aim: Int = 0) {
     fun receive(instruction: Instruction): AimShip =
         when (instruction) {
-            is Down -> this.copy(aim = aim - instruction.amount)
+            is Down -> this.copy(aim = aim + instruction.amount)
             is ThisForward -> this.copy(
                 position = position + instruction.amount,
                 depth = depth + aim * instruction.amount,
             )
-            is Up -> this.copy(aim = aim + instruction.amount)
+            is Up -> this.copy(aim = aim - instruction.amount)
         }
     fun calculate() = position * depth
 }
