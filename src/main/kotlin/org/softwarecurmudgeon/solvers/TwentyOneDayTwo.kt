@@ -2,68 +2,66 @@ package org.softwarecurmudgeon.solvers
 
 import org.softwarecurmudgeon.common.Day
 
-sealed interface Instruction {
+sealed interface SubInstruction {
+    data class Forward(val amount: Int): SubInstruction
+    data class Down(val amount: Int): SubInstruction
+    data class Up(val amount: Int): SubInstruction
     companion object {
-        fun parse(input: String) : Instruction? {
+        fun parse(input: String) : SubInstruction? {
             val (instruction, int) = input.split(" ")
             return when (instruction) {
-                "forward" -> ThisForward(int.toInt())
+                "forward" -> Forward(int.toInt())
                 "down" -> Down(int.toInt())
                 "up" -> Up(int.toInt())
                 else -> null
             }
         }
-
     }
 }
 
-data class ThisForward(val amount: Int): Instruction
-data class Down(val amount: Int): Instruction
-data class Up(val amount: Int): Instruction
-
-data class ThisShip(val position: Int = 0, val depth: Int = 0) {
-    fun receive(instruction: Instruction): ThisShip =
-        when (instruction) {
-            is Down -> this.copy(depth = depth + instruction.amount)
-            is ThisForward -> this.copy(position = position + instruction.amount)
-            is Up -> this.copy(depth = depth - instruction.amount)
+data class Sub(val position: Int = 0, val depth: Int = 0) {
+    fun receive(subInstruction: SubInstruction): Sub =
+        when (subInstruction) {
+            is SubInstruction.Down -> this.copy(depth = depth + subInstruction.amount)
+            is SubInstruction.Forward -> this.copy(position = position + subInstruction.amount)
+            is SubInstruction.Up -> this.copy(depth = depth - subInstruction.amount)
         }
 
     fun calculate() = position * depth
 }
 
-data class AimShip(val position: Int = 0, val depth: Int = 0, val aim: Int = 0) {
-    fun receive(instruction: Instruction): AimShip =
-        when (instruction) {
-            is Down -> this.copy(aim = aim + instruction.amount)
-            is ThisForward -> this.copy(
-                position = position + instruction.amount,
-                depth = depth + aim * instruction.amount,
+data class AimSub(val position: Int = 0, val depth: Int = 0, val aim: Int = 0) {
+    fun receive(subInstruction: SubInstruction): AimSub =
+        when (subInstruction) {
+            is SubInstruction.Down -> this.copy(aim = aim + subInstruction.amount)
+            is SubInstruction.Forward -> this.copy(
+                position = position + subInstruction.amount,
+                depth = depth + aim * subInstruction.amount,
             )
-            is Up -> this.copy(aim = aim - instruction.amount)
+            is SubInstruction.Up -> this.copy(aim = aim - subInstruction.amount)
         }
     fun calculate() = position * depth
 }
 
-object TwentyOneDayTwo: Solution<Instruction, Int>(), Solver {
+object TwentyOneDayTwo: Solution<SubInstruction, Int>(), Solver {
     override val day: Day
         get() = Day(2021, 2)
 
-    override fun parseInput(input: Sequence<String>): Sequence<Instruction> =
+    override fun parseInput(input: Sequence<String>): Sequence<SubInstruction> =
         input
             .filter(String::isNotEmpty)
-            .mapNotNull(Instruction.Companion::parse)
+            .mapNotNull(SubInstruction.Companion::parse)
 
-    override fun partOne(input: Sequence<Instruction>): Int =
+    override fun partOne(input: Sequence<SubInstruction>): Int =
         input
-            .fold(ThisShip()){ ship, instruction ->
+            .fold(Sub()){ ship, instruction ->
                 ship.receive(instruction)
             }
             .calculate()
 
-    override fun partTwo(input: Sequence<Instruction>): Int =
+    override fun partTwo(input: Sequence<SubInstruction>): Int =
         input
-            .fold(AimShip()){ ship, instruction ->
+            .fold(AimSub()){ ship, instruction ->
                 ship.receive(instruction)
             }
             .calculate()
