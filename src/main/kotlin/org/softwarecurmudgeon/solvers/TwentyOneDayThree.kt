@@ -2,16 +2,78 @@ package org.softwarecurmudgeon.solvers
 
 import org.softwarecurmudgeon.common.Day
 
-object TwentyOneDayThree: Solution<Int, Int>(), Solver {
+object TwentyOneDayThree: Solution<String, Int>(), Solver {
     override val day: Day
         get() = Day(2021, 3)
 
-    override fun parseInput(input: Sequence<String>): Sequence<Int>  =
+    override fun parseInput(input: Sequence<String>): Sequence<String>  =
         input
             .filter(String::isNotEmpty)
-            .mapNotNull(String::toIntOrNull)
 
-    override fun partOne(input: Sequence<Int>): Int = 4
+    override fun partOne(input: Sequence<String>): Int {
+        val gamma = 0.until(input.first().length).map { position ->
+            input
+                .map { it[position] }
+                .groupBy { it }
+                .maxByOrNull { (_, b) -> b.count() }
+                ?.key!!
+        }
+        val epsilon = gamma.map {
+            when (it) {
+                '1' -> '0'
+                '0' -> '1'
+                else -> '4'
+            }
+        }
+        return gamma.joinToString("").toInt(2) * epsilon.joinToString("").toInt(2)
+    }
 
-    override fun partTwo(input: Sequence<Int>): Int = 5
+    fun mostCommonAtPositionOrTies(input: List<String>, position: Int): Char {
+        val foo = input
+            .map { it[position] }
+            .groupBy { it }
+        return if (foo['1']?.count()!! >= foo['0']?.count()!!) {
+            '1'
+        } else {
+            '0'
+        }
+    }
+
+    fun leastCommonAtPositionOrTies(input: List<String>, position: Int): Char {
+        val foo = input
+            .map { it[position] }
+            .groupBy { it }
+        return if (foo['1']?.count()!! >= foo['0']?.count()!!) {
+            '0'
+        } else {
+            '1'
+        }
+    }
+
+    tailrec fun co2Rating(input: List<String>, targetPosition: Int = 0): String {
+        return if (input.count() == 1) {
+            input.first()
+        } else {
+            val common = leastCommonAtPositionOrTies(input, targetPosition)
+            val newInput = input.filter { it[targetPosition] == common }
+            co2Rating(newInput, targetPosition + 1)
+        }
+    }
+
+    tailrec fun oxygenRating(input: List<String>, targetPosition: Int = 0): String {
+        return if (input.count() == 1) {
+            input.first()
+        } else {
+            val common = mostCommonAtPositionOrTies(input, targetPosition)
+            val newInput = input.filter { it[targetPosition] == common }
+            oxygenRating(newInput, targetPosition + 1)
+        }
+    }
+
+    override fun partTwo(input: Sequence<String>): Int {
+        val oxygen = oxygenRating(input.toList()).toInt(2)
+        val co2 = co2Rating(input.toList()).toInt(2)
+        println("$oxygen $co2")
+        return oxygen * co2
+    }
 }
