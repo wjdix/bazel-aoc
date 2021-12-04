@@ -38,28 +38,25 @@ object AocApplication {
 
         val solverRouter = SolutionRouter()
 
-        val input = InputFetch.forDay(yearDay)
-        solverRouter.routeForDay(yearDay)?.let { solver ->
-            when (part) {
-                "1" -> {
-                    val solution = input
+        InputFetch.forDay(yearDay).let { input ->
+            solverRouter
+                .routeForDay(yearDay)
+                ?.let { solver ->
+                    val solvingFunction = when (part) {
+                        "1" -> solver::solvePartOne
+                        "2" -> solver::solvePartTwo
+                        else -> throw IllegalArgumentException("not a real part: $part")
+                    }
+                    input
                         .lineSequence()
-                        .let(solver::solvePartOne)
-                    println(solution)
-                    println(Submitter.forDay(yearDay, part, solution))
+                        .let(solvingFunction)
+                        .let { solution ->
+                            println(solution)
+                            println(Submitter.forDay(yearDay, part, solution))
+                        }
+
                 }
-                "2" -> {
-                    val solution = input
-                        .lineSequence()
-                        .let(solver::solvePartTwo)
-                    println(solution)
-                    println(Submitter.forDay(yearDay, part, solution))
-                }
-                else -> {
-                    println("not a real part")
-                }
-            }
+                ?: println("No Solver Available for $yearDay")
         }
-            ?: println("No Solver Available for $yearDay")
     }
 }

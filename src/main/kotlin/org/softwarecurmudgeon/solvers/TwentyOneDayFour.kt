@@ -5,7 +5,24 @@ import org.softwarecurmudgeon.common.Day
 
 typealias Board = List<List<Int>>
 
-data class Bingo(val calls: List<Int> = emptyList(), val boards: List<Board> = emptyList()) {
+data class Bingo(
+    val calls: List<Int> = emptyList(),
+    val boards: List<Board> = emptyList(),
+    val called: Set<Int> = emptySet(),
+    val completedBoards: Set<Board> = emptySet(),
+) {
+    fun next(): Bingo {
+        val newCalled = called.plus(calls.first())
+        val newCalls = calls.drop(1)
+        val (completed, notCompleted) = boards.partition { isCompleteBoard(newCalled, it) }
+
+        return Bingo(
+            calls = newCalls,
+            called = newCalled,
+            completedBoards = completedBoards.plus(completed),
+            boards = notCompleted
+        )
+    }
     companion object {
         fun isCompleteBoard(called: Set<Int>, board: Board): Boolean =
             board.any { row -> row.all { it in called } }
@@ -44,45 +61,25 @@ object TwentyOneDayFour: Solution<Bingo, Int>(), Solver {
     override fun parseInput(input: Sequence<String>): Sequence<Bingo> =
         BlankLineSeparatedSequence.generate(input).toList().let(Bingo::parse)
 
-    override fun partOne(input: Sequence<Bingo>): Int {
-        val bingo = input.first()
-        val calls = bingo.calls
-        val (_, completeCalls, completedBoard) = calls
-            .runningFold(setOf<Int>()) { previous, current ->
-                previous.plus(current)
+    override fun partOne(input: Sequence<Bingo>): Int =
+        generateSequence(input.first()) { it.next() }
+            .first {
+                it.completedBoards.count() == 1
             }
-            .flatMap { called ->
-                bingo.boards.map { Triple(Bingo.isCompleteBoard(called, it), called, it) }
+            .let {
+                calculate(it.completedBoards.first(), it.called, it.called.last())
             }
-            .first { (complete, _, _) ->
-                complete
-            }
-
-        return calculate(completedBoard, completeCalls, completeCalls.last())
-    }
 
     private fun calculate(board: Board, calls: Set<Int>, lastCall: Int): Int =
         lastCall * board.flatten().filterNot { it in calls }.sum()
 
 
-    override fun partTwo(input: Sequence<Bingo>): Int {
-        val bingo = input.first()
-        val calls = bingo.calls
-        val toComplete = bingo.boards.count()
-        var completed = setOf<Board>()
-        val (_, completeCalls, completedBoard) = calls
-            .runningFold(setOf<Int>()) { previous, current ->
-                previous.plus(current)
+    override fun partTwo(input: Sequence<Bingo>): Int =
+        generateSequence(input.first()) { it.next() }
+            .first { bingo ->
+                bingo.boards.isEmpty()
             }
-            .flatMap { called ->
-                bingo.boards.map { Triple(Bingo.isCompleteBoard(called, it), called, it) }
-            }.filter { (complete, _, _) ->
-                complete
-            }.first{ (_, _, board) ->
-                completed = completed.plus(listOf(board))
-                completed.count() == toComplete
+            .let {
+                calculate(it.completedBoards.last(), it.called, it.called.last())
             }
-
-        return calculate(completedBoard, completeCalls, completeCalls.last())
-    }
 }
