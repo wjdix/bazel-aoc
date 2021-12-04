@@ -5,6 +5,7 @@ import kotlinx.cli.ArgType
 import kotlinx.cli.required
 import org.softwarecurmudgeon.common.Day
 import org.softwarecurmudgeon.common.InputFetch
+import org.softwarecurmudgeon.common.Submitter
 import org.softwarecurmudgeon.solvers.Solver
 import kotlin.reflect.KClass
 
@@ -41,14 +42,18 @@ object AocApplication {
         solverRouter.routeForDay(yearDay)?.let { solver ->
             when (part) {
                 "1" -> {
-                    input
+                    val solution = input
                         .lineSequence()
                         .let(solver::solvePartOne)
+                    println(solution)
+                    println(Submitter.forDay(yearDay, part, solution))
                 }
                 "2" -> {
-                    input
+                    val solution = input
                         .lineSequence()
                         .let(solver::solvePartTwo)
+                    println(solution)
+                    println(Submitter.forDay(yearDay, part, solution))
                 }
                 else -> {
                     println("not a real part")

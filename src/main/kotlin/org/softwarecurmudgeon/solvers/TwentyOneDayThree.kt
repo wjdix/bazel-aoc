@@ -28,7 +28,7 @@ object TwentyOneDayThree: Solution<String, Int>(), Solver {
         return gamma.joinToString("").toInt(2) * epsilon.joinToString("").toInt(2)
     }
 
-    fun mostCommonAtPositionOrTies(input: List<String>, position: Int): Char {
+    private fun mostCommonAtPositionOrTies(input: List<String>, position: Int): Char {
         val foo = input
             .map { it[position] }
             .groupBy { it }
@@ -39,7 +39,7 @@ object TwentyOneDayThree: Solution<String, Int>(), Solver {
         }
     }
 
-    fun leastCommonAtPositionOrTies(input: List<String>, position: Int): Char {
+    private fun leastCommonAtPositionOrTies(input: List<String>, position: Int): Char {
         val foo = input
             .map { it[position] }
             .groupBy { it }
@@ -50,7 +50,7 @@ object TwentyOneDayThree: Solution<String, Int>(), Solver {
         }
     }
 
-    tailrec fun co2Rating(input: List<String>, targetPosition: Int = 0): String {
+    private tailrec fun co2Rating(input: List<String>, targetPosition: Int = 0): String {
         return if (input.count() == 1) {
             input.first()
         } else {
@@ -60,7 +60,7 @@ object TwentyOneDayThree: Solution<String, Int>(), Solver {
         }
     }
 
-    tailrec fun oxygenRating(input: List<String>, targetPosition: Int = 0): String {
+    private tailrec fun oxygenRating(input: List<String>, targetPosition: Int = 0): String {
         return if (input.count() == 1) {
             input.first()
         } else {
@@ -70,10 +70,7 @@ object TwentyOneDayThree: Solution<String, Int>(), Solver {
         }
     }
 
-    override fun partTwo(input: Sequence<String>): Int {
-        val oxygen = oxygenRating(input.toList()).toInt(2)
-        val co2 = co2Rating(input.toList()).toInt(2)
-        println("$oxygen $co2")
-        return oxygen * co2
-    }
+    override fun partTwo(input: Sequence<String>): Int =
+        oxygenRating(input.toList()).toInt(2) *
+                co2Rating(input.toList()).toInt(2)
 }
