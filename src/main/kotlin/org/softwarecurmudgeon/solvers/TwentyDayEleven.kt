@@ -8,6 +8,15 @@ import org.softwarecurmudgeon.common.NeighborCounter
 data class Slope(val x: Int, val y: Int)
 data class Coords(val x: Int, val y: Int) {
     fun plus(slope: Slope) = this.copy(x = x + slope.x, y = slope.y + y)
+    companion object {
+        fun parse(string: String): Coords =
+            string
+                .split(",")
+                .map(String::toInt)
+                .let { (x, y) ->
+                    Coords(x = x, y = y)
+                }
+    }
 }
 
 object TwentyDayEleven: Solution<List<Char>, Int>(), Solver {

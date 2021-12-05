@@ -86,7 +86,7 @@ object TwentyDaySeven: Solution<BagSpecification, Int>(), Solver {
             .filterValues { it.contains("shiny gold") }
             .count()
 
-    private fun bagCount(bagCounts: List<BagCount>, bagMap: Map<String, BagSpecification>, sum: Int = 0): Int =
+    private tailrec fun bagCount(bagCounts: List<BagCount>, bagMap: Map<String, BagSpecification>, sum: Int = 0): Int =
         if (bagCounts.isEmpty()) {
             sum
         } else {
