@@ -2,6 +2,7 @@ package org.softwarecurmudgeon
 
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
+import kotlinx.cli.default
 import kotlinx.cli.required
 import org.softwarecurmudgeon.common.Day
 import org.softwarecurmudgeon.common.InputFetch
@@ -31,6 +32,9 @@ object AocApplication {
                 description = "Part"
             )
             .required()
+        val submit by parser
+            .option(ArgType.Boolean, shortName = "s", description = "Submit Solution")
+            .default(false)
 
         parser.parse(args)
 
@@ -52,7 +56,7 @@ object AocApplication {
                         .let(solvingFunction)
                         .let { solution ->
                             println(solution)
-                            println(Submitter.forDay(yearDay, part, solution))
+                            if (submit) println(Submitter.forDay(yearDay, part, solution))
                         }
 
                 }

@@ -61,25 +61,19 @@ object TwentyOneDayFour: Solution<Bingo, Int>(), Solver {
     override fun parseInput(input: Sequence<String>): Sequence<Bingo> =
         BlankLineSeparatedSequence.generate(input).toList().let(Bingo::parse)
 
+    private fun bingoSequence(bingo: Bingo) =
+        generateSequence(bingo) { it.next() }
+
     override fun partOne(input: Sequence<Bingo>): Int =
-        generateSequence(input.first()) { it.next() }
-            .first {
-                it.completedBoards.count() == 1
-            }
-            .let {
-                calculate(it.completedBoards.first(), it.called, it.called.last())
-            }
+        bingoSequence(input.first())
+            .first { it.completedBoards.count() == 1 }
+            .let { calculate(it.completedBoards.first(), it.called, it.called.last()) }
+
+    override fun partTwo(input: Sequence<Bingo>): Int =
+        bingoSequence(input.first())
+            .first { it.boards.isEmpty() }
+            .let { calculate(it.completedBoards.last(), it.called, it.called.last()) }
 
     private fun calculate(board: Board, calls: Set<Int>, lastCall: Int): Int =
         lastCall * board.flatten().filterNot { it in calls }.sum()
-
-
-    override fun partTwo(input: Sequence<Bingo>): Int =
-        generateSequence(input.first()) { it.next() }
-            .first { bingo ->
-                bingo.boards.isEmpty()
-            }
-            .let {
-                calculate(it.completedBoards.last(), it.called, it.called.last())
-            }
 }
