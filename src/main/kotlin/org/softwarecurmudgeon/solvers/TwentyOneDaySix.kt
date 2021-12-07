@@ -2,13 +2,6 @@ package org.softwarecurmudgeon.solvers
 
 import org.softwarecurmudgeon.common.Day
 
-fun spawn(days: Int): List<Int> =
-    if (days == 0) {
-        listOf(8, 6)
-    } else {
-        listOf(days - 1)
-    }
-
 object TwentyOneDaySix: Solution<Int, Long>(), Solver {
     override val day: Day
         get() = Day(2021, 6)
@@ -34,7 +27,6 @@ object TwentyOneDaySix: Solution<Int, Long>(), Solver {
         }
             .values
             .sum()
-
     }
 
     override fun partOne(input: Sequence<Int>): Long =
