@@ -21,6 +21,7 @@ maven_install(
         "org.junit.platform:junit-platform-suite-api:1.8.1",
         "com.github.kittinunf.fuel:fuel:2.3.1",
         "org.jetbrains.kotlinx:kotlinx-cli-jvm:0.3.3",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2",
     ],
     fetch_sources = True,
     repositories = [
