@@ -34,29 +34,59 @@ object TwentyOneDayEight: Solution<DigitLine, Int>(), Solver {
                 val translation = findTranslation(line)
                 line.output
                     .joinToString("") { translate(translation, it).toString() }
-                    .let { println(it); it}
                     .toInt()
             }
-            .let { println(it.toList()) ; it}
             .sum()
     }
 
     private fun findTranslation(input: DigitLine): Map<Set<Char>, Int> {
-        val words = input.input + input.output
-        val one = words.first { it.length == 2 }
-        val four = words.first { it.length == 4 }
-        val seven = words.first { it.length == 3 }
-        val eight = words.first { it.length == 7 }
+        val words = (input.input + input.output)
+            .map(String::toSet)
+            .distinct()
+        val one = words.first { it.count() == 2 }
+        val four = words.first { it.count() == 4 }
+        val seven = words.first { it.count() == 3 }
+        val eight = words.first { it.count() == 7 }
+        val nine = words
+            .filter { it.count() == 6 }
+            .first { nineCandidate ->
+                four.all { it in nineCandidate }
+            }
+        val zero = words
+            .filter { it.count() == 6 }
+            .minus(listOf(nine))
+            .first { zeroCandidate ->
+                one.all { it in zeroCandidate }
+            }
+        val six = words
+            .filter { it.count() == 6}
+            .minus(listOf(zero, nine))
+            .first()
+        val five = words
+            .filter { it.count() == 5}
+            .first {
+                six.intersect(it) == it
+            }
+        val three = words
+            .filter { it.count() == 5 }
+            .first { threeCandidate ->
+                threeCandidate.intersect(one) == one
+            }
+        val two = words.first { twoCandidate ->
+            twoCandidate.count() == 5 && twoCandidate !in listOf(five, three)
+        }
 
-        val a: Char = (seven.toSet() - one.toSet()).first()
-        val d = (four.toSet() - seven.toSet().minus(a)).first()
-        val zero = eight.toSet().minus(d)
-        return mapOf(
+    return mapOf(
             zero to 0,
-            one.toSet() to 1,
-            four.toSet() to 4,
-            seven.toSet() to 7,
-            eight.toSet() to 8,
+            one to 1,
+            two to 2,
+            three to 3,
+            four to 4,
+            five to 5,
+            six to 6,
+            seven to 7,
+            eight to 8,
+            nine to 9,
         )
     }
 
