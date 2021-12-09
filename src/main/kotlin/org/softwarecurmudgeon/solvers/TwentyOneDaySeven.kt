@@ -23,15 +23,10 @@ object TwentyOneDaySeven: Solution<Int, Int>(), Solver {
 
     private fun costTwo(elements: List<Int>, target: Int) =
         elements.sumOf {
-            distanceCost((it - target).absoluteValue)
+            triangle((it - target).absoluteValue)
         }
 
-    private tailrec fun distanceCost(distance: Int, sum: Int = 0): Int =
-        if (distance == 0) {
-            sum
-        } else {
-            distanceCost(distance - 1, sum + distance)
-        }
+    private fun triangle(n: Int): Int = (n * (n + 1)) / 2
 
     override fun partOne(input: Sequence<Int>): Int =
         input.toList().minOf { target ->
@@ -39,7 +34,7 @@ object TwentyOneDaySeven: Solution<Int, Int>(), Solver {
         }
 
     override fun partTwo(input: Sequence<Int>): Int =
-        0.until(input.maxOrNull()!! + 10).minOf{ target ->
+        0.until(input.maxOrNull()!!).minOf{ target ->
             costTwo(input.toList(), target)
         }
 }

@@ -1,15 +1,15 @@
 package org.softwarecurmudgeon.common
 
-typealias LifeMap = List<List<Char>>
-typealias NeighborCounter = (input: LifeMap, x: Int, y: Int) -> Int
+typealias LifeMap<X> = List<List<X>>
+typealias NeighborCounter<X> = (input: LifeMap<X>, x: Int, y: Int) -> Int
 
-class GameOfLife(
-    val neighborCounter: NeighborCounter,
+class CharGameOfLife(
+    val neighborCounter: NeighborCounter<Char>,
     private val permissibleNeighbors: Int,
 ) {
     private fun step(
-        input: LifeMap,
-    ) : LifeMap =
+        input: LifeMap<Char>,
+    ) : LifeMap<Char> =
         input.mapIndexed { y, line ->
             line.mapIndexed { x, char ->
                 val neighbors = neighborCounter(
@@ -38,7 +38,7 @@ class GameOfLife(
             }
         }
 
-    fun findFixedPoint(input: LifeMap) =
+    fun findFixedPoint(input: LifeMap<Char>) =
         generateSequence(
             seed = input,
             nextFunction = { step(input) },

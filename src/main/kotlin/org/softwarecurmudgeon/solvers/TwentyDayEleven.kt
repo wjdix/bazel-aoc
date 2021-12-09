@@ -1,13 +1,23 @@
 package org.softwarecurmudgeon.solvers
 
-import org.softwarecurmudgeon.common.Day
-import org.softwarecurmudgeon.common.GameOfLife
 import org.softwarecurmudgeon.common.LifeMap
 import org.softwarecurmudgeon.common.NeighborCounter
+import org.softwarecurmudgeon.common.CharGameOfLife
+import org.softwarecurmudgeon.common.Day
 
 data class Slope(val x: Int, val y: Int)
 data class Coords(val x: Int, val y: Int) {
+    val neighborSlopes = listOf(
+        Slope(x = 1, y = 0),
+        Slope(x = -1, y = 0),
+        Slope(x = 0, y = 1),
+        Slope(x = 0, y = -1)
+    )
     fun plus(slope: Slope) = this.copy(x = x + slope.x, y = slope.y + y)
+    fun neighbors(): List<Coords> = neighborSlopes.map{ neighborSlope ->
+        plus(neighborSlope)
+    }
+
     companion object {
         fun parse(string: String): Coords =
             string
@@ -25,14 +35,14 @@ object TwentyDayEleven: Solution<List<Char>, Int>(), Solver {
 
     private val blockingCoords: MutableMap<Pair<Slope, Coords>, Coords> = mutableMapOf()
 
-    private fun visible(input: LifeMap, coords: Coords, slope: Slope): Char {
+    private fun visible(input: LifeMap<Char>, coords: Coords, slope: Slope): Char {
         val visibleCoords = blockingCoords.getOrPut(Pair(slope, coords)) {
             uncachedCoords(input = input, coords = coords.plus(slope), slope = slope)
         }
         return input.getOrNull(visibleCoords.y)?.getOrNull(visibleCoords.x) ?: '.'
     }
 
-    private tailrec fun uncachedCoords(input: LifeMap, coords: Coords, slope: Slope): Coords =
+    private tailrec fun uncachedCoords(input: LifeMap<Char>, coords: Coords, slope: Slope): Coords =
         when (input.getOrNull(coords.y)?.getOrNull(coords.x)) {
             '#' -> coords
             'L' -> coords
@@ -41,7 +51,7 @@ object TwentyDayEleven: Solution<List<Char>, Int>(), Solver {
             else -> Coords(-1, -1)
         }
 
-    private fun countVisible(input: LifeMap, x: Int, y: Int): Int =
+    private fun countVisible(input: LifeMap<Char>, x: Int, y: Int): Int =
         (-1..1)
             .flatMap { ySlope ->
                 (-1..1).map { xSlope ->
@@ -54,7 +64,7 @@ object TwentyDayEleven: Solution<List<Char>, Int>(), Solver {
             }
             .count { it == '#' }
 
-    private fun countNeighbors(input: LifeMap, x: Int, y: Int): Int =
+    private fun countNeighbors(input: LifeMap<Char>, x: Int, y: Int): Int =
         ((y - 1)..(y + 1))
             .flatMap{ yi ->
                 ((x - 1)..(x + 1)).map { xi ->
@@ -76,7 +86,7 @@ object TwentyDayEleven: Solution<List<Char>, Int>(), Solver {
             }
             .sum()
 
-    private fun seatedCount(input: LifeMap): Int = input.sumOf { line ->
+    private fun seatedCount(input: LifeMap<Char>): Int = input.sumOf { line ->
         line.count { it == '#' }
     }
 
@@ -85,8 +95,8 @@ object TwentyDayEleven: Solution<List<Char>, Int>(), Solver {
             .filter(String::isNotEmpty)
             .map(String::toList)
 
-    private fun solve(input: LifeMap, counter: NeighborCounter, permissibleNeighbors: Int = 4): Int =
-        GameOfLife(
+    private fun solve(input: LifeMap<Char>, counter: NeighborCounter<Char>, permissibleNeighbors: Int = 4): Int =
+        CharGameOfLife(
             neighborCounter = counter,
             permissibleNeighbors = permissibleNeighbors
         ).findFixedPoint(input)
