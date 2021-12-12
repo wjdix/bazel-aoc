@@ -22,46 +22,46 @@ object TwentyOneDayEleven: Solution<MutableList<Int>, Long>(), Solver {
 
     private fun generateSteps(input: Sequence<MutableList<Int>>): Sequence<State> =
         input.toMutableList().let { map ->
-        generateSequence(State()) { state ->
-            val flashers = 0.until(10).flatMap{ y ->
-                0.until(10).mapNotNull { x ->
-                    if (!state.flashedOnStep) {
-                        map[y][x] += 1
-                    }
-                    if (map[y][x] > 9) {
-                        Coords(y = y, x = x)
-                    } else {
-                        null
-                    }
-                }
-            }
-                .filter { it !in state.currentStepFlashers }
-            if (flashers.isEmpty()) {
-                state.currentStepFlashers.forEach { coords ->
-                    map[coords.y][coords.x] = 0
-                }
-                state.copy(
-                    flashedOnStep = false,
-                    step = state.step + 1,
-                    currentStepFlashers = emptySet()
-                )
-            } else {
-                flashers.forEach{ flasher ->
-                    map[flasher.y][flasher.x] = 0
-                    flasher.allNeighbors()
-                        .filter { it !in state.currentStepFlashers }
-                        .forEach { neighbor ->
-                            map[neighbor.y][neighbor.x] += 1
+            generateSequence(State()) { state ->
+                val flashers = 0.until(10).flatMap{ y ->
+                    0.until(10).mapNotNull { x ->
+                        if (!state.flashedOnStep) {
+                            map[y][x] += 1
                         }
+                        if (map[y][x] > 9) {
+                            Coords(y = y, x = x)
+                        } else {
+                            null
+                        }
+                    }
                 }
+                    .filter { it !in state.currentStepFlashers }
+                if (flashers.isEmpty()) {
+                    state.currentStepFlashers.forEach { coords ->
+                        map[coords.y][coords.x] = 0
+                    }
+                    state.copy(
+                        flashedOnStep = false,
+                        step = state.step + 1,
+                        currentStepFlashers = emptySet()
+                    )
+                } else {
+                    flashers.forEach{ flasher ->
+                        map[flasher.y][flasher.x] = 0
+                        flasher.allNeighbors()
+                            .filter { it !in state.currentStepFlashers }
+                            .forEach { neighbor ->
+                                map[neighbor.y][neighbor.x] += 1
+                            }
+                    }
 
-                state.copy(
-                    flashed = state.flashed + flashers.count(),
-                    currentStepFlashers = state.currentStepFlashers.plus(flashers),
-                    flashedOnStep = true,
-                )
+                    state.copy(
+                        flashed = state.flashed + flashers.count(),
+                        currentStepFlashers = state.currentStepFlashers.plus(flashers),
+                        flashedOnStep = true,
+                    )
+                }
             }
-        }
         }
 
     fun flashesAfterSteps(n: Int, input: Sequence<MutableList<Int>>): Long =
