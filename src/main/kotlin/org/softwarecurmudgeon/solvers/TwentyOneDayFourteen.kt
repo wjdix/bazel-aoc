@@ -5,10 +5,11 @@ import org.softwarecurmudgeon.common.Day
 import org.softwarecurmudgeon.common.update
 import org.softwarecurmudgeon.common.charCounts
 
-typealias Rule = Pair<String, Char>
+typealias Locus = List<Char>
+typealias Rule = Pair<Locus, Char>
 
 data class Polymer(
-    val string: Map<String, Long>,
+    val string: Map<Locus, Long>,
     val rules: List<Rule>
 )
 
@@ -25,7 +26,7 @@ object TwentyOneDayFourteen : Solution<Polymer, Long>(), Solver {
             .filter(String::isNotEmpty)
             .map(String::trim)
             .map{ it.split(" -> ") }
-            .map{ (first, second) -> Rule(first, second.first()) }
+            .map{ (first, second) -> Rule(first.toList(), second.first()) }
             .toList()
 
         return sequenceOf(
@@ -33,6 +34,7 @@ object TwentyOneDayFourteen : Solution<Polymer, Long>(), Solver {
                 string = string
                     .first()
                     .windowed(2)
+                    .map(String::toList)
                     .associateWith { 1L },
                 rules = parsedRules
             )
@@ -60,13 +62,19 @@ object TwentyOneDayFourteen : Solution<Polymer, Long>(), Solver {
             val newCounts = polymer
                 .string
                 .toList()
-                .fold(mapOf<String, Long>()) { results, (pair, count) ->
+                .fold(mapOf<Locus, Long>()) { results, (pair, count) ->
                     val rule = polymer.rules.first { rule -> rule.first == pair }
                     val newPairs = listOf(
-                        pair.take(1).plus(rule.second),
-                        rule.second.toString().plus(pair.drop(1)),
+                        listOf(
+                            pair[0],
+                            rule.second
+                        ),
+                        listOf(
+                            rule.second,
+                            pair[1]
+                        )
                     )
-                    newPairs.fold(results) { acc: Map<String, Long>, newPair ->
+                    newPairs.fold(results) { acc, newPair ->
                         acc.update(newPair, 0) { it + count }
                     }
                 }
