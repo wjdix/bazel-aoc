@@ -4,6 +4,7 @@ import org.softwarecurmudgeon.common.LifeMap
 import org.softwarecurmudgeon.common.NeighborCounter
 import org.softwarecurmudgeon.common.CharGameOfLife
 import org.softwarecurmudgeon.common.Day
+import kotlin.math.absoluteValue
 
 data class Slope(val x: Int, val y: Int)
 data class Coords(val x: Int, val y: Int) {
@@ -17,6 +18,12 @@ data class Coords(val x: Int, val y: Int) {
     fun neighbors(): List<Coords> = neighborSlopes.map{ neighborSlope ->
         plus(neighborSlope)
     }
+
+    fun limitedNeighbors(maxX: Int, maxY: Int): List<Coords>  = neighbors()
+        .filter { it.x in (0..maxX) && it.y in (0..maxY) }
+
+    fun distanceTo(other: Coords): Int =
+        (this.x - other.x).absoluteValue + (this.y - other.y).absoluteValue
 
     companion object {
         fun parse(string: String): Coords =
