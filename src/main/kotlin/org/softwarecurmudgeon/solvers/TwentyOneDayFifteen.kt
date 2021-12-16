@@ -1,6 +1,7 @@
 package org.softwarecurmudgeon.solvers
 
 import org.softwarecurmudgeon.common.Day
+import java.util.*
 
 typealias RiskMap = List<List<Int>>
 typealias RiskPath = List<Coords>
@@ -27,16 +28,17 @@ object TwentyOneDayFifteen : Solution<RiskMap, Long>(), Solver {
         goal: Coords,
         cost: (Coords, Coords) -> Int,
         heuristic: (Coords, Coords) -> Int,
-    ): RiskPath {
-        val openSet = mutableSetOf(Coords(0, 0))
+    ): Long {
         val cameFrom = mutableMapOf<Coords, Coords>()
         val gScore = mutableMapOf<Coords, Int>().withDefault { Int.MAX_VALUE }
         gScore[Coords(0, 0)] = 0
+        val openSet = PriorityQueue { t1: Coords, t2: Coords -> gScore[t1]!! - gScore[t2]!! }
+        openSet.add(Coords(0, 0))
         val fScore = mutableMapOf<Coords, Int>().withDefault { Int.MAX_VALUE }
         while (openSet.isNotEmpty()) {
-            val lowest = openSet.minByOrNull { fScore[it]!! }!!
+            val lowest = openSet.remove()
             if (lowest == goal) {
-                return reconstructPath(lowest, cameFrom)
+                return gScore[goal]!!.toLong()
             }
             openSet -= lowest
             lowest.limitedNeighbors(maxX = goal.x, maxY = goal.y).forEach { neighbor ->
@@ -49,28 +51,8 @@ object TwentyOneDayFifteen : Solution<RiskMap, Long>(), Solver {
                 }
             }
         }
-        return emptyList()
+        return -1
     }
-
-    private tailrec fun reconstructPath(
-        lowest: Coords?,
-        cameFrom: Map<Coords, Coords>,
-        currentPath: RiskPath = emptyList()
-    ): RiskPath =
-        if (lowest == null) {
-            currentPath
-        } else {
-            val newLowest = cameFrom[lowest]
-            reconstructPath(
-                newLowest,
-                cameFrom,
-                if (newLowest == null) {
-                    currentPath
-                } else {
-                    currentPath.plus(newLowest)
-                }
-            )
-        }
 
     override fun partOne(input: Sequence<RiskMap>): Long {
         val goal = Coords(
@@ -86,9 +68,6 @@ object TwentyOneDayFifteen : Solution<RiskMap, Long>(), Solver {
                 source.distanceTo(g)
             }
         )
-            .sumOf {
-                input.first().getOrNull(it.y)?.getOrNull(it.x)?.toLong() ?: 0L
-            }
     }
 
     override fun partTwo(input: Sequence<RiskMap>): Long {
@@ -105,12 +84,6 @@ object TwentyOneDayFifteen : Solution<RiskMap, Long>(), Solver {
                 source.distanceTo(g)
             }
         )
-            .asReversed()
-            .drop(1)
-            .plus(goal)
-            .sumOf {
-                input.first().getRepeated(x = it.x, y = it.y).toLong()
-            }
     }
 }
 
