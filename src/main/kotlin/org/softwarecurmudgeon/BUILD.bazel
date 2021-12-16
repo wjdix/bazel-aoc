@@ -11,6 +11,3 @@ kt_jvm_binary(
     ],
     main_class = "org.softwarecurmudgeon.AocApplication"
 )
-
-
-
