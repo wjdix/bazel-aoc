@@ -4,7 +4,6 @@ import org.softwarecurmudgeon.common.Day
 import java.util.*
 
 typealias RiskMap = List<List<Int>>
-typealias RiskPath = List<Coords>
 
 object TwentyOneDayFifteen : Solution<RiskMap, Long>(), Solver {
     override val day: Day
