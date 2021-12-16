@@ -28,7 +28,6 @@ object TwentyOneDayFifteen : Solution<RiskMap, Long>(), Solver {
         cost: (Coords, Coords) -> Int,
         heuristic: (Coords, Coords) -> Int,
     ): Long {
-        val cameFrom = mutableMapOf<Coords, Coords>()
         val gScore = mutableMapOf<Coords, Int>().withDefault { Int.MAX_VALUE }
         gScore[Coords(0, 0)] = 0
         val openSet = PriorityQueue { t1: Coords, t2: Coords -> gScore[t1]!! - gScore[t2]!! }
@@ -43,7 +42,6 @@ object TwentyOneDayFifteen : Solution<RiskMap, Long>(), Solver {
             lowest.limitedNeighbors(maxX = goal.x, maxY = goal.y).forEach { neighbor ->
                 val tentativeGScore = gScore.getOrDefault(lowest, Int.MAX_VALUE) + cost(lowest, neighbor)
                 if (tentativeGScore < gScore.getOrDefault(neighbor, Int.MAX_VALUE)) {
-                    cameFrom[neighbor] = lowest
                     gScore[neighbor] = tentativeGScore
                     fScore[neighbor] = tentativeGScore + heuristic(neighbor, goal)
                     openSet.add(neighbor)
@@ -53,37 +51,38 @@ object TwentyOneDayFifteen : Solution<RiskMap, Long>(), Solver {
         return -1
     }
 
-    override fun partOne(input: Sequence<RiskMap>): Long {
-        val goal = Coords(
-            y = input.first().count() - 1,
-            x = input.first().first().count() - 1
-        )
-        return bestPath(
+    private fun solve(input: RiskMap, goal: Coords) =
+        bestPath(
             goal = goal,
-            cost = {_, dest ->
-                input.first().getOrNull(dest.y)?.getOrNull(dest.x) ?: Int.MAX_VALUE
+            cost = { _, dest ->
+                input.getRepeated(x = dest.x, y = dest.y)
             },
             heuristic = { source, g ->
                 source.distanceTo(g)
             }
         )
-    }
 
-    override fun partTwo(input: Sequence<RiskMap>): Long {
-        val goal = Coords(
-            y = input.first().count() * 5 - 1,
-            x = input.first().first().count() * 5 - 1
-        )
-        return bestPath(
-            goal = goal,
-            cost = {_, dest ->
-                input.first().getRepeated(x = dest.x, y = dest.y)
-            },
-            heuristic = { source, g ->
-                source.distanceTo(g)
-            }
-        )
-    }
+    override fun partOne(input: Sequence<RiskMap>): Long =
+        input.first().let { map ->
+            solve(
+                map,
+                Coords(
+                    x = input.count() - 1,
+                    y = input.first().count() - 1
+                )
+            )
+        }
+
+    override fun partTwo(input: Sequence<RiskMap>): Long =
+        input.first().let { map ->
+            solve(
+                map,
+                Coords(
+                    y = input.first().count() * 5 - 1,
+                    x = input.first().first().count() * 5 - 1
+                )
+            )
+        }
 }
 
 fun RiskMap.getRepeated(x: Int, y: Int): Int {
