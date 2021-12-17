@@ -160,7 +160,7 @@ object TwentyOneDaySixteen: Solution<Packet, Long>(), Solver {
         get() = Day(2021, 16)
 
     @SuppressWarnings("ComplexMethod")
-    fun toHex(input: String): String =
+    fun toBinary(input: String): String =
         input.split("").mapNotNull {
             when (it) {
                 "0" -> "0000"
@@ -190,7 +190,7 @@ object TwentyOneDaySixteen: Solution<Packet, Long>(), Solver {
     override fun parseInput(input: Sequence<String>): Sequence<Packet> =
         input
             .filter(String::isNotEmpty)
-            .map(::toHex)
+            .map(::toBinary)
             .map(Packet.Companion::parse)
             .map { it.first!! }
 
