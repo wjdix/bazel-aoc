@@ -229,4 +229,3 @@ internal class TwentyOneDayNineteenTest {
         )
     }
 }
-
