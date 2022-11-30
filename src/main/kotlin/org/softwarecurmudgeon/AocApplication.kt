@@ -20,6 +20,7 @@ class SolutionRouter{
     fun routeForDay(day: Day): Solver? = solvers[day]
 }
 
+@Suppress("NestedBlockDepth")
 object AocApplication {
     @JvmStatic fun main(args: Array<String>) {
         val parser = ArgParser("aoc")
