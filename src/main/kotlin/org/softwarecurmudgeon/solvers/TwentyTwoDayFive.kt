@@ -12,14 +12,12 @@ data class CraneInstruction(
 class CraneState(
     val stacks: MutableList<MutableList<Char>>
 ) {
-    fun apply(instruction: CraneInstruction): CraneState {
-        val move = stacks[instruction.from - 1].takeLast(instruction.number).reversed()
-        stacks[instruction.from - 1] = stacks[instruction.from - 1].dropLast(instruction.number).toMutableList()
-        stacks[instruction.to - 1] = stacks[instruction.to -1].plus(move).toMutableList()
-        return this
-    }
-    fun applyTwo(instruction: CraneInstruction): CraneState {
-        val move = stacks[instruction.from - 1].takeLast(instruction.number)
+    fun apply(instruction: CraneInstruction, reverse: Boolean = true): CraneState {
+        val move = if (reverse) {
+            stacks[instruction.from - 1].takeLast(instruction.number).reversed()
+        } else {
+            stacks[instruction.from - 1].takeLast(instruction.number)
+        }
         stacks[instruction.from - 1] = stacks[instruction.from - 1].dropLast(instruction.number).toMutableList()
         stacks[instruction.to - 1] = stacks[instruction.to -1].plus(move).toMutableList()
         return this
@@ -71,7 +69,7 @@ object TwentyTwoDayFive: Solution<Sequence<String>, String>(), Solver {
         val instructions = parseInstructions(input.toList()[1])
 
         return instructions.fold(state) { acc, instruction ->
-            acc.applyTwo(instruction)
+            acc.apply(instruction, reverse = false)
         }.top()
     }
 
