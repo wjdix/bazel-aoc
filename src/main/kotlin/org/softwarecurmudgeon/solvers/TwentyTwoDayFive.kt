@@ -10,7 +10,7 @@ data class CraneInstruction(
 )
 
 class CraneState(
-    val stacks: MutableList<MutableList<Char>>
+    private val stacks: MutableList<MutableList<Char>>
 ) {
     fun apply(instruction: CraneInstruction, reverse: Boolean = true): CraneState {
         val move = if (reverse) {
@@ -55,6 +55,7 @@ object TwentyTwoDayFive: Solution<Sequence<String>, String>(), Solver {
     private fun parseInstructions(instructions: Sequence<String>): Sequence<CraneInstruction> =
         instructions.map(::parseInstruction)
 
+    @Suppress("MagicNumber")
     private fun parseInstruction(s: String): CraneInstruction {
         val split = s.split(" ")
         return CraneInstruction(
