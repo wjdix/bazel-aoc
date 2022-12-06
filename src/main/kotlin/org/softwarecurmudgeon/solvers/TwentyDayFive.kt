@@ -8,7 +8,7 @@ data class BinarySeat(val bytes: String) {
     val row: Int
         get() = bytes.dropLast(3).toInt(2)
     val column: Int
-        get() = bytes.drop(7).let{ println(it); it }.toInt(2)
+        get() = bytes.drop(7).toInt(2)
     companion object {
         fun parse(input: String): BinarySeat =
             BinarySeat(
