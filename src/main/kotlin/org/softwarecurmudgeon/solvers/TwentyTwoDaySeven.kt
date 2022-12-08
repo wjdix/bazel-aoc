@@ -96,14 +96,18 @@ object TwentyTwoDaySeven: Solution<DirectoryTraversalLine, Int>(), Solver {
                 is DirectoryResultLine -> {
                     val currentDirectoryNode = state.currentDirectoryNode!!
                     state.currentDirectoryNode = currentDirectoryNode.copy(
-                        containsDirectories = currentDirectoryNode.containsDirectories.plus(state.currentPath.plus(step.name).joinToString("/"))
+                        containsDirectories = currentDirectoryNode.containsDirectories.plus(
+                            state.currentPath.plus(step.name).joinToString("/")
+                        )
                     )
                     state
                 }
                 is FileResultLine -> {
                     val currentDirectoryNode = state.currentDirectoryNode!!
                     state.currentDirectoryNode = currentDirectoryNode.copy(
-                        containsFiles = currentDirectoryNode.containsFiles.plus(FileNode(name = step.name, size = step.size))
+                        containsFiles = currentDirectoryNode.containsFiles.plus(
+                            FileNode(name = step.name, size = step.size)
+                        )
                     )
                     state
                 }
